@@ -5,7 +5,8 @@
 The key features are:
 
 * Asynchronous XML-RPC server based on xmlrpc.server module;
-* 
+* Only standard libraries are used;
+* Server with process pool for CPU-bound operations.
 
 ---
 
@@ -18,19 +19,51 @@ Only standard Python libraries
 <div class="termy">
 
 ```console
-$ git clone https://github.com/krivokhizhin/asyncxmlrpc.git
+$ git clone https://github.com/krivokhizhin/aioserver.git
 
 ---> 100%
 ```
 
 </div>
 
-cd
+## Usage
+- simple async XML-RPC server:
 
-python3 sync_tools/serve_forever.py
-python3 serve_forever.py
+```python
+# save this as server.py
+import asyncio
 
-python3 sync_tools/client.py 250000
-python3 -m timeit 'from sync_tools.client import RpcClient;  RpcClient.start_for_timeit(250000, "localhost", 8000, 60, 100, 20)'
+from aioserver.xmlrpc.server import AsyncXMLRPCServer
+from load import aload  # some async function
 
-ps f
+async def main():
+    server = AsyncXMLRPCServer(('localhost', 6677))
+    server.register_introspection_functions()
+    server.register_function(aload)
+
+asyncio.run(main())
+```
+
+```shell
+$ python -m server
+```
+- async XML-RPC server with process pool:
+
+```python
+# save this as pool_server.py
+import asyncio
+
+from aioserver.xmlrpc.pool_server import AsyncPoolXMLRPCServer
+from load import load  # some sync function
+
+async def main():
+    server = AsyncPoolXMLRPCServer(('localhost', 6677), 6)
+    server.register_introspection_functions()
+    server.register_function(load)
+
+asyncio.run(main())
+```
+
+```shell
+$ python -m pool_server
+```

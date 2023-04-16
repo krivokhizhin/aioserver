@@ -10,7 +10,6 @@ from ..streamserver import AsyncStreamRequestHandler
 class AsyncBaseHTTPRequestHandler(AsyncStreamRequestHandler, BaseHTTPRequestHandler):
     
     async def async_handle(self):
-        """Handle multiple requests if necessary."""
         self.close_connection = True
 
         await self.async_handle_one_request()
@@ -18,9 +17,6 @@ class AsyncBaseHTTPRequestHandler(AsyncStreamRequestHandler, BaseHTTPRequestHand
             await self.async_handle_one_request()
 
     async def async_handle_one_request(self):
-        """
-        Implementation of BaseHTTPRequestHandler.handle_one_request logic
-        """
         try:
             self.raw_requestline = await self.rfile.readline()
             if len(self.raw_requestline) > 65536:
@@ -50,9 +46,6 @@ class AsyncBaseHTTPRequestHandler(AsyncStreamRequestHandler, BaseHTTPRequestHand
             return
 
     async def async_parse_request(self):
-        """
-        Implementation of BaseHTTPRequestHandler.parse_request logic
-        """
         self.command = None  # set in case of error on the first line
         self.request_version = version = self.default_request_version
         self.close_connection = True

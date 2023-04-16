@@ -16,9 +16,6 @@ class AsyncPoolXMLRPCServer(AsyncXMLRPCServer):
         self.max_workers = max_workers
 
     async def serve_forever(self):
-        """
-        Implementation of BaseServer.serve_forever logic
-        """
 
         if self.max_workers > 0 and self.has_not_async_function():
             self.executor = ProcessPoolExecutor(self.max_workers)

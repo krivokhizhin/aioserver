@@ -11,7 +11,6 @@ from ..http.server import AsyncBaseHTTPRequestHandler
 class AsyncXMLRPCDispatcher(SimpleXMLRPCDispatcher):
     
     async def _async_marshaled_dispatch(self, data, dispatch_method = None, path = None):
-        """Dispatches an XML-RPC method from marshalled (XML) data."""
         try:
             params, method = loads(data, use_builtin_types=self.use_builtin_types)
 
@@ -36,7 +35,6 @@ class AsyncXMLRPCDispatcher(SimpleXMLRPCDispatcher):
         return response.encode(self.encoding, 'xmlcharrefreplace')
 
     async def _async_dispatch(self, method, params):
-        """Dispatches the XML-RPC method."""
         try:
             # call the matching registered function
             func = self.funcs[method]
@@ -74,7 +72,6 @@ class AsyncXMLRPCDispatcher(SimpleXMLRPCDispatcher):
 class AsyncXMLRPCRequestHandler(AsyncBaseHTTPRequestHandler, SimpleXMLRPCRequestHandler):
 
     async def async_do_POST(self):
-        """Handles the HTTP POST request."""
         # Check that the path is legal
         if not self.is_rpc_path_valid():
             self.report_404()
@@ -152,6 +149,6 @@ class AsyncXMLRPCServer(AsyncXMLRPCDispatcher, AsyncStreamServer):
     async def call_func(self, method, *args, **kwargs):
         if inspect.iscoroutinefunction(method):
             return await method(*args, **kwargs)
-        elif not hasattr(self, 'loop'):
-            return method(*args, **kwargs)
+        
+        return method(*args, **kwargs)
         

@@ -7,15 +7,6 @@ _MAXLINE = 65536
 _MAXHEADERS = 100
     
 async def async_http_parse_headers(reader: StreamReader, _class=HTTPMessage):
-    """Parses only RFC2822 headers from a file pointer.
-
-    email Parser wants to see strings rather than bytes.
-    But a TextIOWrapper around self.rfile would buffer too many bytes
-    from the stream, bytes which we later need to read as bytes.
-    So we read the correct bytes here, as bytes, for email Parser
-    to parse.
-
-    """
     headers = []
     while True:
         line = await reader.readline()
